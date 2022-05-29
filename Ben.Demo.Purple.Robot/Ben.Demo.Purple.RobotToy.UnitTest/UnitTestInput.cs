@@ -98,6 +98,33 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         }
 
         /// <summary>
+        /// Test non-Integer entered for X or Y in PLACE command.
+        /// </summary>
+        [TestMethod]
+        public void TestPlaceCommandNonIntegerXandY()
+        {
+            //Prepare for the test
+            var parser = new MyCore.InputParser();
+            //Non-Integer for X
+            string[] input = "PLACE 3.5,1,WEST".Split(" ".ToCharArray());
+
+            //Get result
+            var exception = Assert.ThrowsException<ArgumentException>(delegate { parser.ParseCommandParameter(input, MyCore.Direction.South, null); });
+
+            //Check the result
+            Assert.IsTrue(exception.Message.Contains(MyCore.Constants.InvalidPlaceCommandXY), "Test fails for non-Integer X or Y in PLACE command in TestPlaceCommandNonIntegerXandY!");
+
+            //Non-Integer for Y
+            input = "PLACE 3,Y,NORTH".Split(" ".ToCharArray());
+
+            //Get result
+            exception = Assert.ThrowsException<ArgumentException>(delegate { parser.ParseCommandParameter(input, MyCore.Direction.South, null); });
+
+            //Check the result
+            Assert.IsTrue(exception.Message.Contains(MyCore.Constants.InvalidPlaceCommandXY), "Test fails for non-Integer X or Y in PLACE command in TestPlaceCommandNonIntegerXandY!");
+        }
+
+        /// <summary>
         /// Test first time PLACE command with an incomplete input
         /// </summary>
         [TestMethod]
