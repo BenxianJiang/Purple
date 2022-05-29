@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{22D593BF-4465-4566-8A3E-826339B14025}</ProjectGuid>
+    <ProjectGuid>{B1B0FA21-4F2F-4E73-946B-80002696C7E1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ben.Demo.Purple.RobotToy.Core</RootNamespace>

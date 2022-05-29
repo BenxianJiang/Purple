@@ -1,56 +1,57 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using MyCore = Ben.Demo.Purple.RobotToy.Core;
 
-namespace Ben.Demo.Purple.RobotToy
+namespace Purple.Robot.Simulator
 {
-    /// <summary>
-    /// Console Application entry class.
-    /// </summary>
     class Program
     {
-        /// <summary>
-        /// Entry funtion for the console application.
-        /// </summary>
-        /// <param name="args">Parameters for the console application if any.</param>
+            /// <summary>
+            /// Entry funtion for the console application.
+            /// </summary>
+            /// <param name="args">Parameters for the console application if any.</param>
         static void Main(string[] args)
-        {
-            //Display application instruction text to user
-            Console.WriteLine(MyCore.Constants.ApplicationInstructionText);
-
-            //Prepare 6 X 6 grid board and initilize simulator.
-            MyCore.ToyBoard board = new MyCore.ToyBoard(6, 6);
-            MyCore.InputParser inputParser = new MyCore.InputParser();
-            MyCore.IToyRobot robot = new MyCore.ToyRobot();
-            var simulator = new MyCore.Simulator(robot, board, inputParser);
-
-            //Accept user's commands until "Exit" command received;
-            bool endApp = false;
-            while (!endApp)
             {
-                var cmd = Console.ReadLine();
-                if (cmd == null) continue;
+                //Display application instruction text to user
+                Console.WriteLine(MyCore.Constants.ApplicationInstructionText);
 
-                if (cmd.Equals("EXIT", StringComparison.OrdinalIgnoreCase))
+                //Prepare 6 X 6 grid board and initilize simulator.
+                MyCore.ToyBoard board = new MyCore.ToyBoard(6, 6);
+                MyCore.InputParser inputParser = new MyCore.InputParser();
+                MyCore.IToyRobot robot = new MyCore.ToyRobot();
+                var simulator = new MyCore.Simulator(robot, board, inputParser);
+
+                //Accept user's commands until "Exit" command received;
+                bool endApp = false;
+                while (!endApp)
                 {
-                    endApp = true;
-                }
-                else
-                {
-                    try
+                    var cmd = Console.ReadLine();
+                    if (cmd == null) continue;
+
+                    if (cmd.Equals("EXIT", StringComparison.OrdinalIgnoreCase))
                     {
-                        string output = simulator.ProcessCommand(cmd.Split(' '));
-
-                        if (!string.IsNullOrWhiteSpace(output))
-                        {
-                            Console.WriteLine(output);
-                        }
+                        endApp = true;
                     }
-                    catch (ArgumentException exception)
+                    else
                     {
-                        Console.WriteLine(exception.Message);
+                        try
+                        {
+                            string output = simulator.ProcessCommand(cmd.Split(' '));
+
+                            if (!string.IsNullOrWhiteSpace(output))
+                            {
+                                Console.WriteLine(output);
+                            }
+                        }
+                        catch (ArgumentException exception)
+                        {
+                            Console.WriteLine(exception.Message);
+                        }
                     }
                 }
             }
-        }
     }
 }

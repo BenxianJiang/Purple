@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Ben.Demo.Purple.RobotToy.Core")]
+[assembly: AssemblyTitle("Ben.Demo.Purple.RobotToy.Simulator")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Ben.Demo.Purple.RobotToy.Core")]
+[assembly: AssemblyProduct("Ben.Demo.Purple.RobotToy.Simulator")]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("b1b0fa21-4f2f-4e73-946b-80002696c7e1")]
+[assembly: Guid("7bbe608d-9631-4ef9-9818-b0c7c51c971e")]
 
 // Version information for an assembly consists of the following four values:
 //

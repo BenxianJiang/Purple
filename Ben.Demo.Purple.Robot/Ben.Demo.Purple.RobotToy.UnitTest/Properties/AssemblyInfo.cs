@@ -5,15 +5,15 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Ben.Demo.Purple.RobotToy.UnitTest")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("DXC")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Ben.Demo.Purple.RobotToy.UnitTest")]
-[assembly: AssemblyCopyright("Copyright © DXC 2022")]
+[assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 [assembly: ComVisible(false)]
 
-[assembly: Guid("5b314f53-7f11-4a1f-b204-41178f914adc")]
+[assembly: Guid("4a7a20bb-d7c8-4c21-8a79-4652574e06ac")]
 
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
