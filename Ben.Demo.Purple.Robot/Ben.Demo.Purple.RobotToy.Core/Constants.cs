@@ -1,4 +1,47 @@
-# Purple
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Ben.Demo.Purple.RobotToy.Core
+{
+    /// <summary>
+    /// Define all available directions. It is used for rotate method in class ToyRobot.
+    /// Note the values must be in the order as follows! It is also used for calculate 
+    /// next position when turn left or right.
+    /// </summary>
+    public enum Direction
+    {
+        North,
+        East,
+        South,
+        West
+    }
+    
+    /// <summary>
+    /// Define all avaliable Commands. 
+    /// </summary>
+    public enum Command
+    {
+        Place,
+        Move,
+        Left,
+        Right,
+        Report
+    }
+
+    /// <summary>
+    /// Define different description text used by the solution.
+    /// </summary>
+    public static class Constants
+    {
+        public const string InvalidCommandText = "Invalid command detected! Please try again by using format: PLACE X,Y,F|MOVE|LEFT|RIGHT|REPORT|EXIT";
+        public const string IncompletePlaceCommandText = "Incomplete command!. Please ensure that the PLACE command is using format: PLACE X,Y,F";
+        public const string InvalidDirectionText = "Invalid direction! Please select one of directions: NORTH|EAST|SOUTH|WEST";
+        public const string InvalidPlaceCommandXY = "Invalid Place command! Place command X or Y must be integer.";
+        public const string ApplicationInstructionText =
+                    @"
 ############################################################################
 ##                 Toy Robot Simulator                                    ##
 ##                                                                        ##
@@ -34,3 +77,7 @@ How to play the application:
 5: The command and facing direction text are case insensitive.
                       
 ############################################################################
+
+                    ";
+    }
+}
