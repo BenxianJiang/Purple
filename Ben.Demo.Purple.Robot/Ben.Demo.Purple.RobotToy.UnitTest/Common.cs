@@ -20,7 +20,7 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         {
             //Prepare Simulator for unit test methods.
             MyCore.ToyBoard toyBoard = new MyCore.ToyBoard(6, 6);
-            MyCore.InputParser inputParser = new MyCore.InputParser();
+            MyCore.InputChecker inputParser = new MyCore.InputChecker(null, MyCore.Direction.South);
             MyCore.ToyRobot robot = new MyCore.ToyRobot();
 
             var simulator = new MyCore.Simulator(robot, toyBoard, inputParser);

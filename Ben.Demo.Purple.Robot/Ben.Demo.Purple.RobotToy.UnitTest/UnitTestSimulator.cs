@@ -18,7 +18,7 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         {
             //Prepare Simulator
             MyCore.ToyBoard board = new MyCore.ToyBoard(6, 6);
-            MyCore.InputParser inputParser = new MyCore.InputParser();
+            MyCore.InputChecker inputParser = new MyCore.InputChecker(null, MyCore.Direction.South);
             MyCore.ToyRobot robot = new MyCore.ToyRobot();
 
             var simulator = new MyCore.Simulator(robot, board, inputParser);
@@ -39,7 +39,7 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         {
             //Prepare Simulator
             MyCore.ToyBoard board = new MyCore.ToyBoard(6, 6);
-            MyCore.InputParser inputParser = new MyCore.InputParser();
+            MyCore.InputChecker inputParser = new MyCore.InputChecker(null, MyCore.Direction.South);
             MyCore.ToyRobot robot = new MyCore.ToyRobot();
 
             var simulator = new MyCore.Simulator(robot, board, inputParser);
@@ -61,7 +61,7 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         {
             //Prepare Simulator
             MyCore.ToyBoard toyBoard = new MyCore.ToyBoard(6, 6);
-            MyCore.InputParser inputParser = new MyCore.InputParser();
+            MyCore.InputChecker inputParser = new MyCore.InputChecker(null, MyCore.Direction.South);
             MyCore.ToyRobot robot = new MyCore.ToyRobot();
 
             var simulator = new MyCore.Simulator(robot, toyBoard, inputParser);
@@ -85,7 +85,7 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         {
             //Prepare Simulator
             MyCore.ToyBoard toyBoard = new MyCore.ToyBoard(6, 6);
-            MyCore.InputParser inputParser = new MyCore.InputParser();
+            MyCore.InputChecker inputParser = new MyCore.InputChecker(null, MyCore.Direction.South);
             MyCore.ToyRobot robot = new MyCore.ToyRobot();
 
             var simulator = new MyCore.Simulator(robot, toyBoard, inputParser);
@@ -109,16 +109,16 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         {
             //Prepare Simulator
             MyCore.ToyBoard toyBoard = new MyCore.ToyBoard(6, 6);
-            MyCore.InputParser inputParser = new MyCore.InputParser();
+            MyCore.InputChecker inputParser = new MyCore.InputChecker(null, MyCore.Direction.South);
             MyCore.ToyRobot robot = new MyCore.ToyRobot();
 
             var simulator = new MyCore.Simulator(robot, toyBoard, inputParser);
 
             //Start to put Place outside boundary.
-            simulator.ProcessCommand("PLACE 6,0,EAST".Split(' '));
+            var exception = Assert.ThrowsException<ArgumentException>(delegate { simulator.ProcessCommand("PLACE 6,0,EAST".Split(' ')); });
 
             //Check - it shall not set the position.
-            Assert.IsNull(robot.Position, "Test fails in TestSimulatorPlaceCommandOutsideBoundary!");
+            Assert.IsTrue(exception.Message.Contains(MyCore.Constants.PlaceRobotOutsideBoundaryText), "Test fails in TestSimulatorPlaceCommandOutsideBoundary!");
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         {
             //Prepare Simulator
             MyCore.ToyBoard toyBoard = new MyCore.ToyBoard(6, 6);
-            MyCore.InputParser inputParser = new MyCore.InputParser();
+            MyCore.InputChecker inputParser = new MyCore.InputChecker(null, MyCore.Direction.South);
             MyCore.ToyRobot robot = new MyCore.ToyRobot();
 
             var simulator = new MyCore.Simulator(robot, toyBoard, inputParser);
@@ -150,31 +150,31 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         {
             //Prepare Simulator
             MyCore.ToyBoard toyBoard = new MyCore.ToyBoard(6, 6);
-            MyCore.InputParser inputParser = new MyCore.InputParser();
+            MyCore.InputChecker inputParser = new MyCore.InputChecker(null, MyCore.Direction.South);
             MyCore.ToyRobot robot = new MyCore.ToyRobot();
 
             var simulator = new MyCore.Simulator(robot, toyBoard, inputParser);
 
             //Get result
             var input = "MOVE".Split(' ');
-            var result = simulator.ProcessCommand(input);
+            var exception = Assert.ThrowsException<ArgumentException>(delegate { simulator.ProcessCommand(input); });
 
             //Check the result
-            Assert.IsNull(robot.Position, "Test fails for command 'MOVE' without first Place command in TestSimulatorCommandsWithoutPlaceCommandFirst!");
+            Assert.IsTrue(exception.Message.Contains(MyCore.Constants.IssueFirstValidPlaceCommandText), "Test fails for command 'MOVE' without first Place command in TestSimulatorCommandsWithoutPlaceCommandFirst!");
 
             //Get result
             input = "LEFT".Split(' ');
-            result = simulator.ProcessCommand(input);
+            exception = Assert.ThrowsException<ArgumentException>(delegate { simulator.ProcessCommand(input); });
 
             //Check the result
-            Assert.IsNull(robot.Position, "Test fails for command 'LEFT' without first Place command in TestSimulatorCommandsWithoutPlaceCommandFirst!");
+            Assert.IsTrue(exception.Message.Contains(MyCore.Constants.IssueFirstValidPlaceCommandText), "Test fails for command 'LEFT' without first Place command in TestSimulatorCommandsWithoutPlaceCommandFirst!");
 
             //Get result
             input = "RIGHT".Split(' ');
-            result = simulator.ProcessCommand(input);
+            exception = Assert.ThrowsException<ArgumentException>(delegate { simulator.ProcessCommand(input); });
 
             //Check the result
-            Assert.IsNull(robot.Position, "Test fails for command 'RIGHT' without first Place command in TestSimulatorCommandsWithoutPlaceCommandFirst!");
+            Assert.IsTrue(exception.Message.Contains(MyCore.Constants.IssueFirstValidPlaceCommandText), "Test fails for command 'RIGHT' without first Place command in TestSimulatorCommandsWithoutPlaceCommandFirst!");
         }
 
         /// <summary>
@@ -300,90 +300,35 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
             //put Robot on NORTH boundary grid
             simulator.ProcessCommand("PLACE 1,5,NORTH".Split(' '));
             //Move toward outside boundary
-            simulator.ProcessCommand("MOVE".Split(' '));
+            //simulator.ProcessCommand("MOVE".Split(' '));
+            var exception = Assert.ThrowsException<ArgumentException>(delegate { simulator.ProcessCommand("MOVE".Split(' ')); });
 
             //Check - the robot shall stay on the boundary grid.
-            string expected = "Output: 1,5,NORTH";
-            string actual = simulator.GetReport();
-            Assert.AreEqual(actual, expected, "Test fails Move to outside 'North' boundary in TestSimulatorMoveOutsideBoundaries!");
+            Assert.IsTrue(exception.Message.Contains(MyCore.Constants.MoveRobotOutsideBoundaryText), "Test fails Move to outside 'North' boundary in TestSimulatorMoveOutsideBoundaries!");
 
             //put Robot on WEST boundary grid
             simulator.ProcessCommand("PLACE 0,3,WEST".Split(' '));
             //Move toward outside boundary
-            simulator.ProcessCommand("MOVE".Split(' '));
+            exception = Assert.ThrowsException<ArgumentException>(delegate { simulator.ProcessCommand("MOVE".Split(' ')); });
 
             //Check - the robot shall stay on the boundary grid.
-            expected = "Output: 0,3,WEST";
-            actual = simulator.GetReport();
-            Assert.AreEqual(actual, expected, "Test fails Move to outside 'West' boundary in TestSimulatorMoveOutsideBoundaries!");
+            Assert.IsTrue(exception.Message.Contains(MyCore.Constants.MoveRobotOutsideBoundaryText), "Test fails Move to outside 'West' boundary in TestSimulatorMoveOutsideBoundaries!");
 
             //put Robot on SOUTH boundary grid
             simulator.ProcessCommand("PLACE 4,0,SOUTH".Split(' '));
             //Move toward outside boundary
-            simulator.ProcessCommand("MOVE".Split(' '));
+            exception = Assert.ThrowsException<ArgumentException>(delegate { simulator.ProcessCommand("MOVE".Split(' ')); });
 
             //Check - the robot shall stay on the boundary grid.
-            expected = "Output: 4,0,SOUTH";
-            actual = simulator.GetReport();
-            Assert.AreEqual(actual, expected, "Test fails Move to outside 'South' boundary in TestSimulatorMoveOutsideBoundaries!");
+            Assert.IsTrue(exception.Message.Contains(MyCore.Constants.MoveRobotOutsideBoundaryText), "Test fails Move to outside 'South' boundary in TestSimulatorMoveOutsideBoundaries!");
 
             //put Robot on EAST boundary grid
             simulator.ProcessCommand("PLACE 5,2,EAST".Split(' '));
             //Move toward outside boundary
-            simulator.ProcessCommand("MOVE".Split(' '));
+            exception = Assert.ThrowsException<ArgumentException>(delegate { simulator.ProcessCommand("MOVE".Split(' ')); });
 
             //Check - the robot shall stay on the boundary grid.
-            expected = "Output: 5,2,EAST";
-            actual = simulator.GetReport();
-            Assert.AreEqual(actual, expected, "Test fails Move to outside 'East' boundary in TestSimulatorMoveOutsideBoundaries!");
-        }
-
-        /// <summary>
-        /// Test robot on North East corner and stay there when Move toward outside boundaries.
-        /// </summary>
-        [TestMethod]
-        public void TestSimulatorMoveStayOnNorthEastCorner()
-        {
-            //Prepare
-            var simulator = Common.InitSimulator();
-
-            //Start - It shall ignore MOVE command when Robot goes out of the Board boundaries.
-            simulator.ProcessCommand("PLACE 5,5,NORTH".Split(' '));
-            simulator.ProcessCommand("MOVE".Split(' '));
-            simulator.ProcessCommand("RIGHT".Split(' '));
-            simulator.ProcessCommand("MOVE".Split(' '));
-            simulator.ProcessCommand("MOVE".Split(' '));
-            simulator.ProcessCommand("LEFT".Split(' '));
-            simulator.ProcessCommand("MOVE".Split(' '));
-
-            //Check
-            string expected = "Output: 5,5,NORTH";
-            string actual = simulator.GetReport();
-            Assert.AreEqual(actual, expected, "Test fails in TestSimulatorMoveStayOnNorthEastCorner!");
-        }
-
-        /// <summary>
-        /// Test robot on West South corner and stay there when Move toward outside boundaries.
-        /// </summary>
-        [TestMethod]
-        public void TestSimulatorMoveStayOnWestSouthCorner()
-        {
-            //Prepare
-            var simulator = Common.InitSimulator();
-
-            //Start - It shall ignore MOVE command when Robot goes out of the Board boundaries.
-            simulator.ProcessCommand("PLACE 0,0,WEST".Split(' '));
-            simulator.ProcessCommand("MOVE".Split(' '));
-            simulator.ProcessCommand("LEFT".Split(' '));
-            simulator.ProcessCommand("MOVE".Split(' '));
-            simulator.ProcessCommand("MOVE".Split(' '));
-            simulator.ProcessCommand("RIGHT".Split(' '));
-            simulator.ProcessCommand("MOVE".Split(' '));
-
-            //Check
-            string expected = "Output: 0,0,WEST";
-            string actual = simulator.GetReport();
-            Assert.AreEqual(actual, expected, "Test fails in TestSimulatorMoveStayOnWestSouthCorner!");
+            Assert.IsTrue(exception.Message.Contains(MyCore.Constants.MoveRobotOutsideBoundaryText), "Test fails Move to outside 'East' boundary in TestSimulatorMoveOutsideBoundaries!");
         }
 
         /// <summary>

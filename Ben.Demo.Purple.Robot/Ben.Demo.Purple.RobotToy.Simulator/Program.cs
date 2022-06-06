@@ -20,9 +20,9 @@ namespace Purple.Robot.Simulator
 
                 //Prepare 6 X 6 grid board and initilize simulator.
                 MyCore.ToyBoard board = new MyCore.ToyBoard(6, 6);
-                MyCore.InputParser inputParser = new MyCore.InputParser();
+                MyCore.InputChecker inputChecker = new MyCore.InputChecker(null, MyCore.Direction.North);
                 MyCore.IToyRobot robot = new MyCore.ToyRobot();
-                var simulator = new MyCore.Simulator(robot, board, inputParser);
+                var simulator = new MyCore.Simulator(robot, board, inputChecker);
 
                 //Accept user's commands until "Exit" command received;
                 bool endApp = false;

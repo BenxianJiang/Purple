@@ -37,9 +37,12 @@ namespace Ben.Demo.Purple.RobotToy.Core
     public static class Constants
     {
         public const string InvalidCommandText = "Invalid command detected! Please try again by using format: PLACE X,Y,F|MOVE|LEFT|RIGHT|REPORT|EXIT";
-        public const string IncompletePlaceCommandText = "Incomplete command!. Please ensure that the PLACE command is using format: PLACE X,Y,F";
+        public const string IncompletePlaceCommandText = "Incomplete command! Please ensure that the PLACE command is using format: PLACE X,Y,F";
         public const string InvalidDirectionText = "Invalid direction! Please select one of directions: NORTH|EAST|SOUTH|WEST";
         public const string InvalidPlaceCommandXY = "Invalid Place command! Place command X or Y must be integer.";
+        public const string PlaceRobotOutsideBoundaryText = "Please place the robot inside the robot board!";
+        public const string MoveRobotOutsideBoundaryText = "Can not move Robot outside boundary!";
+        public const string IssueFirstValidPlaceCommandText = "Place issue a valid Place X,Y,F to start the game! Where X, Y must be inside the Robot board.";
         public const string ApplicationInstructionText =
                     @"
 ############################################################################
