@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BizUnit.Core" Version="5.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Ben.Demo.Purple.RobotToy.Core\Ben.Demo.Purple.RobotToy.Core.csproj" />
   </ItemGroup>
 
