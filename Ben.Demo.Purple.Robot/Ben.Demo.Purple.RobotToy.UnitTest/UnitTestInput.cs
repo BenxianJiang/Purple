@@ -17,7 +17,7 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         public void TestInvalidCommandInpput()
         {
             //Prepare for the test
-            var parser = new MyCore.InputParser();
+            var parser = new MyCore.InputChecker(null, MyCore.Direction.East);
             string[] input = "Go".Split(" ".ToCharArray());
 
             //Get result
@@ -34,7 +34,7 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         public void TestValidPlaceCommand()
         {
             //Prepare for the test
-            var parser = new MyCore.InputParser();
+            var parser = new MyCore.InputChecker(null, MyCore.Direction.East);
             string[] input = "Place".Split(" ".ToCharArray());
 
             //Get result
@@ -51,7 +51,7 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         public void TestInvalidPlaceCommand()
         {
             //Prepare for the test
-            var parser = new MyCore.InputParser();
+            var parser = new MyCore.InputChecker(null, MyCore.Direction.East);
             string[] input = "PlaceME".Split(" ".ToCharArray());
 
             //Get result
@@ -68,16 +68,16 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         public void TestValidPlaceCommandAndInpput()
         {
             //Prepare for the test
-            var parser = new MyCore.InputParser();
+            var parser = new MyCore.InputChecker(null, MyCore.Direction.East);
             string[] input = "PLACE 3,3,NORTH".Split(" ".ToCharArray());
 
             //Get result
-            var cmdParam = parser.ParseCommandParameter(input, MyCore.Direction.East, null);
+            parser.ParsePlaceCommandParameters(input);
 
             //Check the result
-            Assert.AreEqual(3, cmdParam.Position.X, "Test fails for parse Position X in TestValidPlaceCommandAndInpput!");
-            Assert.AreEqual(3, cmdParam.Position.Y, "Test fails for parse Position Y in TestValidPlaceCommandAndInpput!");
-            Assert.AreEqual(cmdParam.Direction, MyCore.Direction.North, "Test fails for PLACE command Direction in TestValidPlaceCommandAndInpput!");
+            Assert.AreEqual(3, parser.Position.X, "Test fails for parse Position X in TestValidPlaceCommandAndInpput!");
+            Assert.AreEqual(3, parser.Position.Y, "Test fails for parse Position Y in TestValidPlaceCommandAndInpput!");
+            Assert.AreEqual(parser.Direction, MyCore.Direction.North, "Test fails for PLACE command Direction in TestValidPlaceCommandAndInpput!");
         }
 
         /// <summary>
@@ -87,14 +87,41 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         public void TestPlaceCommandAndInvalidDirectionText()
         {
             //Prepare for the test
-            var parser = new MyCore.InputParser();
+            var parser = new MyCore.InputChecker(null, MyCore.Direction.East);
             string[] input = "PLACE 3,1,GO".Split(" ".ToCharArray());
 
             //Get result
-            var exception = Assert.ThrowsException<ArgumentException>(delegate { parser.ParseCommandParameter(input, MyCore.Direction.North, null); });
+            var exception = Assert.ThrowsException<ArgumentException>(delegate { parser.ParsePlaceCommandParameters(input); });
 
             //Check the result
             Assert.IsTrue(exception.Message.Contains(MyCore.Constants.InvalidDirectionText), "Test fails for PLACE command due to wrong Direction Text in TestPlaceCommandAndInvalidDirectionText!");
+        }
+
+        /// <summary>
+        /// Test non-Integer entered for X or Y in PLACE command.
+        /// </summary>
+        [TestMethod]
+        public void TestPlaceCommandNonIntegerXandY()
+        {
+            //Prepare for the test
+            var parser = new MyCore.InputChecker(null, MyCore.Direction.East);
+            //Non-Integer for X
+            string[] input = "PLACE 3.5,1,WEST".Split(" ".ToCharArray());
+
+            //Get result
+            var exception = Assert.ThrowsException<ArgumentException>(delegate { parser.ParsePlaceCommandParameters(input); });
+
+            //Check the result
+            Assert.IsTrue(exception.Message.Contains(MyCore.Constants.InvalidPlaceCommandXY), "Test fails for non-Integer X or Y in PLACE command in TestPlaceCommandNonIntegerXandY!");
+
+            //Non-Integer for Y
+            input = "PLACE 3,Y,NORTH".Split(" ".ToCharArray());
+
+            //Get result
+            exception = Assert.ThrowsException<ArgumentException>(delegate { parser.ParsePlaceCommandParameters(input); });
+
+            //Check the result
+            Assert.IsTrue(exception.Message.Contains(MyCore.Constants.InvalidPlaceCommandXY), "Test fails for non-Integer X or Y in PLACE command in TestPlaceCommandNonIntegerXandY!");
         }
 
         /// <summary>
@@ -104,11 +131,11 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         public void TestFirstTimePlaceCommandAndIncompleteInput()
         {
             //Prepare for the test
-            var parser = new MyCore.InputParser();
+            var parser = new MyCore.InputChecker(null, MyCore.Direction.East);
             string[] input = "PLACE 3,1".Split(" ".ToCharArray());
 
             //Get result
-            var exception = Assert.ThrowsException<ArgumentException>(delegate { parser.ParseCommandParameter(input, MyCore.Direction.South, null); });
+            var exception = Assert.ThrowsException<ArgumentException>(delegate { parser.ParsePlaceCommandParameters(input); });
 
             //Check the result
             Assert.IsTrue(exception.Message.Contains(MyCore.Constants.IncompletePlaceCommandText), "Test fails for incomplete PLACE command in TestPlaceCommandAndIncompleteInput!");
@@ -121,21 +148,20 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         public void TestSequentPlaceCommandWithoutDirection()
         {
             //Prepare for the test
-            var parser = new MyCore.InputParser();
+            var parser = new MyCore.InputChecker(null, MyCore.Direction.East);
             string[] input = "PLACE 3,1,SOUTH".Split(" ".ToCharArray());
             //first valid PLACE command issued
-            parser.ParseCommand(input);
+            parser.ParsePlaceCommandParameters(input);
+
             //second time Place command without direction
             input = "PLACE 2,4".Split(" ".ToCharArray());
-            parser.ParseCommand(input);
-
             //Get result
-            var cmdParam = parser.ParseCommandParameter(input, MyCore.Direction.South, new MyCore.Position(3, 1));
+            parser.ParsePlaceCommandParameters(input);
 
             //Check
-            Assert.AreEqual(2, cmdParam.Position.X, "Test fails for parse Position X in TestSequentPlaceCommandWithoutDirection!");
-            Assert.AreEqual(4, cmdParam.Position.Y, "Test fails for parse Position Y in TestSequentPlaceCommandWithoutDirection!");
-            Assert.AreEqual(cmdParam.Direction, MyCore.Direction.South, "Test fails for PLACE command Direction in TestSequentPlaceCommandWithoutDirection!");
+            Assert.AreEqual(2, parser.Position.X, "Test fails for parse Position X in TestSequentPlaceCommandWithoutDirection!");
+            Assert.AreEqual(4, parser.Position.Y, "Test fails for parse Position Y in TestSequentPlaceCommandWithoutDirection!");
+            Assert.AreEqual(parser.Direction, MyCore.Direction.South, "Test fails for PLACE command Direction in TestSequentPlaceCommandWithoutDirection!");
         }
 
         /// <summary>
@@ -145,7 +171,7 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         public void TestSequentPlaceCommandWithDirection()
         {
             //Prepare for the test
-            var parser = new MyCore.InputParser();
+            var parser = new MyCore.InputChecker(null, MyCore.Direction.East);
             string[] input = "PLACE 3,1,SOUTH".Split(" ".ToCharArray());
             //first valid PLACE command issued
             parser.ParseCommand(input);
@@ -154,12 +180,12 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
             parser.ParseCommand(input);
 
             //Get result
-            var cmdParam = parser.ParseCommandParameter(input, MyCore.Direction.South, new MyCore.Position(3, 1));
+            parser.ParsePlaceCommandParameters(input);
 
             //Check
-            Assert.AreEqual(2, cmdParam.Position.X, "Test fails for parse Position X in TestSequentPlaceCommandWithDirection!");
-            Assert.AreEqual(4, cmdParam.Position.Y, "Test fails for parse Position Y in TestSequentPlaceCommandWithDirection!");
-            Assert.AreEqual(cmdParam.Direction, MyCore.Direction.West, "Test fails for PLACE command Direction in TestSequentPlaceCommandWithDirection!");
+            Assert.AreEqual(2, parser.Position.X, "Test fails for parse Position X in TestSequentPlaceCommandWithDirection!");
+            Assert.AreEqual(4, parser.Position.Y, "Test fails for parse Position Y in TestSequentPlaceCommandWithDirection!");
+            Assert.AreEqual(parser.Direction, MyCore.Direction.West, "Test fails for PLACE command Direction in TestSequentPlaceCommandWithDirection!");
         }
 
         /// <summary>
@@ -169,11 +195,11 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         public void TestPlaceInputWithParameterMoreThanThree()
         {
             //Prepare for the test
-            var parser = new MyCore.PlaceCommandParameterParser();
+            var parser = new MyCore.InputChecker(null, MyCore.Direction.East);
             string[] input = "PLACE 3,3,SOUTH,2".Split(" ".ToCharArray());
 
             //Get result
-            var exception = Assert.ThrowsException<ArgumentException>(delegate { parser.ParseParameters(input, MyCore.Direction.West, null); });
+            var exception = Assert.ThrowsException<ArgumentException>(delegate { parser.ParsePlaceCommandParameters(input); });
 
             //Check
             Assert.IsTrue(exception.Message.Contains(MyCore.Constants.IncompletePlaceCommandText), "Test fails for incomplete PLACE command in TestPlaceInputWithParameterMoreThanThree!");
@@ -186,11 +212,11 @@ namespace Ben.Demo.Purple.RobotToy.UnitTest
         public void TestPlaceInputWithParameterLessThanTwo()
         {
             //Prepare for the test
-            var parser = new MyCore.PlaceCommandParameterParser();
+            var parser = new MyCore.InputChecker(null, MyCore.Direction.East);
             string[] input = "PLACE 3,SOUTH".Split(" ".ToCharArray());
 
             //Get result
-            var exception = Assert.ThrowsException<ArgumentException>(delegate { parser.ParseParameters(input, MyCore.Direction.West, null); });
+            var exception = Assert.ThrowsException<ArgumentException>(delegate { parser.ParsePlaceCommandParameters(input); });
 
             //Check
             Assert.IsTrue(exception.Message.Contains(MyCore.Constants.IncompletePlaceCommandText), "Test fails for incomplete PLACE command in TestPlaceInputWithParameterLessThanTwo!");

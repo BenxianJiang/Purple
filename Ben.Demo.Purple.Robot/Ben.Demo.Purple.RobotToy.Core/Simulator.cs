@@ -14,7 +14,7 @@ namespace Ben.Demo.Purple.RobotToy.Core
     {
         public IToyRobot ToyRobot { get; private set; }
         public ToyBoard ToyBoard { get; private set; }
-        public InputParser InputParser { get; private set; }
+        public InputChecker InputChecker { get; private set; }
 
         /// <summary>
         /// Constructor. Initialize Simulator object.
@@ -22,11 +22,11 @@ namespace Ben.Demo.Purple.RobotToy.Core
         /// <param name="toyRobot">ToyRobot object.</param>
         /// <param name="ToyBoard">ToyBoard object.</param>
         /// <param name="inputParser">InputParser object for checking input parameters.</param>
-        public Simulator(IToyRobot toyRobot, ToyBoard toyBoard, InputParser inputParser)
+        public Simulator(IToyRobot toyRobot, ToyBoard toyBoard, InputChecker inputChecker)
         {
             ToyRobot = toyRobot;
             ToyBoard = toyBoard;
-            InputParser = inputParser;
+            InputChecker = inputChecker;
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Ben.Demo.Purple.RobotToy.Core
         /// <returns>String for current status when process REPORT command. Otherwise it return empty string.</returns>
         public string ProcessCommand(string[] input)
         {
-            Command cmd = InputParser.ParseCommand(input);
+            Command cmd = InputChecker.ParseCommand(input);
 
             //return immediately if first Place command has not been issued.
             if (cmd != Command.Place && ToyRobot.Position == null) return string.Empty;
@@ -45,14 +45,20 @@ namespace Ben.Demo.Purple.RobotToy.Core
             {
                 case Command.Place:
                     //get current Position and Direction and parse the input text.
-                    var currentDirection = ToyRobot.Direction;
-                    var currentPosition = ToyRobot.Position;
-                    var placeCommandParam = InputParser.ParseCommandParameter(input, currentDirection, currentPosition);
+                    InputChecker.Direction = ToyRobot.Direction;
+                    InputChecker.Position = ToyRobot.Position;
+
+                    //parse the new Position and Direction
+                    InputChecker.ParsePlaceCommandParameters(input);
 
                     //set Robot to new position and direction if it is valid.
-                    if (ToyBoard.IsValidPosition(placeCommandParam.Position))
+                    if (ToyBoard.IsValidPosition(InputChecker.Position))
                     {
-                        ToyRobot.Place(placeCommandParam.Position, placeCommandParam.Direction);
+                        ToyRobot.Place(InputChecker.Position, InputChecker.Direction);
+                    }
+                    else
+                    {
+                        throw new ArgumentException(Constants.PlaceRobotOutsideBoundaryText);
                     }
 
                     break;
@@ -64,6 +70,10 @@ namespace Ben.Demo.Purple.RobotToy.Core
                     if (ToyBoard.IsValidPosition(newPosition))
                     {
                         ToyRobot.Position = newPosition;
+                    }
+                    else
+                    {
+                        throw new ArgumentException(Constants.MoveRobotOutsideBoundaryText);
                     }
 
                     break;
